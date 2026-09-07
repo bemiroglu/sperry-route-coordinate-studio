@@ -1,0 +1,5 @@
+Sequence;WP;Latitude DD;Longitude DD;Notes;Leg Semantics;Leg From;Leg To;Geometry;Leg Distance NM;Initial/Constant Course °T;Planned Speed kn
+1;WP001;41.000000;29.000000;Synthetic start;OUTBOUND;WP001;WP002;Rhumb Line;1.0870;56.47;11.00
+2;WP002;41.010000;29.020000;Synthetic point 2;OUTBOUND;WP002;WP003;Rhumb Line;0.6417;339.33;11.00
+3;WP003;41.020000;29.015000;Synthetic point 3;OUTBOUND;WP003;WP004;Rhumb Line;0.7428;66.16;11.00
+4;WP004;41.025000;29.030000;Synthetic finish;;;;;;;

@@ -1,0 +1,57 @@
+
+</head>
+<body>
+<section id="editorScreen" class="screen">
+<div class="shell">
+  <header class="mast">
+    <div class="crest">RCS</div>
+    <div class="mast-main">
+      <div class="kicker">WGS 84 · ROUTE / COORDINATE WORKSPACE · v0.9.0</div>
+      <h1>Sperry Route &amp; Coordinate Studio</h1>
+      <p class="subtitle" data-tr="Koordinatları farklı gösterimlerden güvenli biçimde yorumlar; waypoint ve leg verilerini doğrular, Rhumb Line veya Great Circle hesapları yapar ve yaygın rota/coğrafi formatlara dönüştürür." data-en="Safely parses coordinates in multiple notations, validates waypoint and leg data, performs Rhumb Line or Great Circle calculations, and converts common route/geospatial formats."></p>
+    </div>
+    <div class="lang-switch" aria-label="Language / Dil"><button id="langTR" type="button" class="active">TR</button><button id="langEN" type="button">EN</button></div>
+  </header>
+
+  <section class="card setup">
+    <div class="setup-grid">
+      <div class="field"><label data-tr="Rota adı" data-en="Route name"></label><input id="routeName" type="text" value="NEW ROUTE" maxlength="120"></div>
+      <div class="field"><label data-tr="Varsayılan planlanan hız" data-en="Default planned speed"></label><input id="defaultSpeed" type="number" min="0.1" max="99" step="0.1" value="11"><small data-tr="kn · Leg hızı boşsa 11 kn kullanılır." data-en="kn · Used when a leg-specific speed is blank; default 11 kn."></small></div>
+      <div class="field"><label data-tr="Varsayılan rota geometrisi" data-en="Default route geometry"></label><select id="defaultGeom"><option value="rhumb">Rhumb Line / Loxodrome</option><option value="gc">Great Circle / Orthodrome</option></select></div>
+      <div class="field"><label data-tr="Koordinat gösterimi" data-en="Coordinate display"></label><select id="displayFmt"><option value="ddm" data-tr="DDM — Derece + ondalıklı dakika" data-en="DDM — Degrees + decimal minutes"></option><option value="dd" data-tr="DD — Ondalıklı derece" data-en="DD — Decimal degrees"></option><option value="dms" data-tr="DMS — Derece dakika saniye" data-en="DMS — Degrees minutes seconds"></option></select></div>
+      <div class="field"><label data-tr="Saat dilimi" data-en="Time zone"></label><select id="tzSelect"></select></div>
+      <div class="field"><label data-tr="Kalkış yerel saati" data-en="Departure local time"></label><input id="departure" type="datetime-local" step="60"><small data-tr="ETA hesabı için seçilen sabit UTC ofseti kullanılır." data-en="ETA uses the selected fixed UTC offset."></small></div>
+      <div class="field"><label data-tr="CSV / liste ayıracı" data-en="CSV / list separator"></label><input id="excelSep" type="text" maxlength="1" value=";" inputmode="text"><small data-tr="Türkçe Excel için varsayılan ';'. CSV dışa aktarımında doğrudan kullanılır. XLS/XLSX formülleri dosya standardının yerel-bağımsız sözdizimiyle yazılır ve Excel tarafından yerel ayıraca göre gösterilir." data-en="Default ';' for Turkish Excel workflows. Used directly for CSV export. XLS/XLSX formulas are stored using locale-independent file syntax and displayed by Excel using the local separator."></small></div>
+      <div class="field"><label data-tr="Koordinat referansı / datum" data-en="Coordinate reference / datum"></label><div class="crs-chip"><input id="crsDisplay" type="text" value="WGS 84 — EPSG:4326" readonly><span class="planned" data-tr="SABİT" data-en="FIXED"></span></div><small data-tr="Bu sürümde çalışma ve çıktı koordinatları WGS 84'tür; seçim yapılmaz." data-en="This version uses WGS 84 for working and output coordinates; no CRS selection is required."></small></div>
+      <div class="field"><label data-tr="Sperry dönüş yarıçapı" data-en="Sperry turn radius"></label><input id="turnRadius" type="number" min="0" step="0.01" value="40"><small data-tr="m · Yeni rota için geçici varsayılan: 40 m. Gemi/operasyon özelinde teyit edilmelidir." data-en="m · Provisional default for new routes: 40 m. Verify for the vessel and operation."></small></div>
+      <div class="field"><label data-tr="Off-track alarm limiti" data-en="Off-track alarm limit"></label><input id="offTrack" type="number" min="0" step="1" value="100"><small data-tr="m · Sperry .route çıktısı" data-en="m · Sperry .route export"></small></div>
+      <div class="field"><label data-tr="Rota notu" data-en="Route note"></label><input id="routeNote" type="text" data-tr-placeholder="İsteğe bağlı" data-en-placeholder="Optional"></div>
+    </div>
+    <div class="row-actions">
+      <span class="pill"><span data-tr="Başlangıç satırı" data-en="Initial rows"></span>: <b>50</b></span>
+      <span class="pill"><span data-tr="Aktif WP" data-en="Active WP"></span>: <b id="activeWpCount">0</b></span>
+      <span class="pill"><span data-tr="Toplam" data-en="Total"></span>: <b id="totalNmTop">0.00 NM</b></span>
+      <button id="helpBtn" class="ghost" type="button" data-tr="KOORDİNAT GİRİŞ YARDIMI" data-en="COORDINATE INPUT HELP"></button>
+      <button id="crsHelpBtn" class="ghost" type="button" data-tr="CRS / DATUM BİLGİSİ" data-en="CRS / DATUM INFO"></button>
+      <button id="qiblaBtn" class="ghost qibla-btn" type="button" data-tr="KIBLE / KÂBE" data-en="QIBLA / KAABA"></button>
+      <button id="resetAllBtn" class="ghost" type="button" data-tr="TÜMÜNÜ TEMİZLE" data-en="RESET ALL"></button>
+      <span id="authorEntry" class="fineprint author-sigil"></span>
+    </div>
+  </section>
+
+  <div class="io-grid">
+    <section class="card io">
+      <h2 class="section-title" data-tr="DOSYA AÇ" data-en="OPEN COORDINATE FILE"></h2>
+      <div class="dropzone"><div class="io-actions"><button id="openFileBtn" class="secondary" type="button" data-tr="DOSYA SEÇ" data-en="CHOOSE FILE"></button><input id="fileInput" type="file" accept=".route,.gpx,.kml,.kmz,.csv,.txt,.xls,.xlsx,.geojson,.json"></div><div class="help-note" data-tr=".route, GPX, KML/KMZ, CSV/TXT, XLS/XLSX ve GeoJSON desteklenir. İçe aktarılan veriler aynı WP tablosuna getirilir." data-en="Supports .route, GPX, KML/KMZ, CSV/TXT, XLS/XLSX and GeoJSON. Imported data is normalized into the same waypoint table."></div></div>
+      <div id="fileStatus" class="statusbar" data-tr="Henüz dosya seçilmedi." data-en="No file selected yet."></div>
+    </section>
+    <section class="card io">
+      <h2 class="section-title" data-tr="TOPLU METİN" data-en="BULK PASTE"></h2>
+      <div class="field"><textarea id="bulkText" rows="4" placeholder="A; 41 02.450 N; 029 04.230 E&#10;B; 41,12545; 29,18552"></textarea></div>
+      <div class="io-actions"><button id="previewBulkBtn" class="secondary" type="button" data-tr="YORUMLA / ÖNİZLE" data-en="PARSE / PREVIEW"></button><button id="acceptBulkBtn" class="primary" type="button" disabled data-tr="TABLOYA AKTAR" data-en="ACCEPT INTO TABLE"></button><button id="clearBulkBtn" class="ghost" type="button" data-tr="TEMİZLE" data-en="CLEAR"></button></div>
+      <div id="bulkPreview" class="bulk-preview hidden"></div>
+    </section>
+  </div>
+
+  <section class="card editor-card">
+    <div class="editor-head"><h2 class="section-title" style="margin:0" data-tr="WAYPOINT / LEG TABLOSU" data-en="WAYPOINT / LEG EDITOR"></h2><div class="spacer"></div><button id="clearWpTableBtn" class="danger" type="button" data-tr="WP TABLOSUNU TEMİZLE" data-en="CLEAR WP TABLE"></button><button id="add1" class="ghost" type="button">+1</button><button id="add10" class="ghost" type="button">+10</button><button id="add50" class="ghost" type="button">+50</button><button id="mapBtn" class="primary" type="button" disabled data-tr="HARİTADA GÖSTER" data-en="SHOW MAP"></button></div>

@@ -1,0 +1,31 @@
+name: Build standalone HTML
+
+on:
+  push:
+    paths:
+      - 'src/**'
+      - 'tools/build_single_file.py'
+      - '.github/workflows/build-single-file.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build single-file HTML
+        run: python tools/build_single_file.py
+      - name: Commit generated standalone if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Sperry_Route_Coordinate_Studio.html
+          if git diff --cached --quiet; then
+            echo "No generated changes."
+            exit 0
+          fi
+          git commit -m "Build standalone HTML [skip ci]"
+          git push

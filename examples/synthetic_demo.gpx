@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="Sperry Route &amp; Coordinate Studio v0.9.0" xmlns="http://www.topografix.com/GPX/1/1" xmlns:rcs="urn:route-coordinate-studio:2"><metadata><name>SYNTHETIC DEMO</name><extensions><rcs:modelVersion>2</rcs:modelVersion><rcs:legSemantics>outbound</rcs:legSemantics><rcs:defaultGeometry>Rhumb Line</rcs:defaultGeometry><rcs:defaultSpeedKn>11.000</rcs:defaultSpeedKn><rcs:timeZone>UTC+03:00</rcs:timeZone><rcs:departureLocal>2026-01-01T12:00</rcs:departureLocal></extensions></metadata><rte><name>SYNTHETIC DEMO</name>
+  <rtept lat="41.000000000" lon="29.000000000"><name>WP001</name><desc>Synthetic start</desc><extensions><rcs:legGeometry>Rhumb Line</rcs:legGeometry><rcs:plannedSpeedKn>11.000</rcs:plannedSpeedKn><rcs:legTo>WP002</rcs:legTo></extensions></rtept>
+  <rtept lat="41.010000000" lon="29.020000000"><name>WP002</name><desc>Synthetic point 2</desc><extensions><rcs:legGeometry>Rhumb Line</rcs:legGeometry><rcs:plannedSpeedKn>11.000</rcs:plannedSpeedKn><rcs:legTo>WP003</rcs:legTo></extensions></rtept>
+  <rtept lat="41.020000000" lon="29.015000000"><name>WP003</name><desc>Synthetic point 3</desc><extensions><rcs:legGeometry>Rhumb Line</rcs:legGeometry><rcs:plannedSpeedKn>11.000</rcs:plannedSpeedKn><rcs:legTo>WP004</rcs:legTo></extensions></rtept>
+  <rtept lat="41.025000000" lon="29.030000000"><name>WP004</name><desc>Synthetic finish</desc><extensions><rcs:legGeometry></rcs:legGeometry><rcs:plannedSpeedKn></rcs:plannedSpeedKn><rcs:legTo></rcs:legTo></extensions></rtept>
+</rte></gpx>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>SYNTHETIC DEMO</name><Placemark><name>WP001</name><description>Synthetic start</description><Point><coordinates>29.000000000,41.000000000,0</coordinates></Point></Placemark>
+<Placemark><name>WP002</name><description>Synthetic point 2</description><Point><coordinates>29.020000000,41.010000000,0</coordinates></Point></Placemark>
+<Placemark><name>WP003</name><description>Synthetic point 3</description><Point><coordinates>29.015000000,41.020000000,0</coordinates></Point></Placemark>
+<Placemark><name>WP004</name><description>Synthetic finish</description><Point><coordinates>29.030000000,41.025000000,0</coordinates></Point></Placemark><Placemark><name>SYNTHETIC DEMO ROUTE</name><LineString><tessellate>1</tessellate><coordinates>29.000000000,41.000000000,0 29.020000000,41.010000000,0 29.015000000,41.020000000,0 29.030000000,41.025000000,0</coordinates></LineString></Placemark></Document></kml>

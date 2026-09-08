@@ -1,42 +1,54 @@
 # Sperry Route & Coordinate Studio
 
-Browser-based route and waypoint editor/converter focused on Sperry Marine VisionMaster FT `.route` workflows, while also supporting common geospatial and spreadsheet formats.
+**Türkçe** | [English](#english)
 
-**Current baseline:** `v0.9.0`
+Tarayıcı içinde çalışan; Sperry Marine VisionMaster FT `.route` iş akışlarını merkeze alırken GPX, KML/KMZ, CSV, XLS/XLSX ve GeoJSON gibi yaygın rota/coğrafi veri biçimleri arasında mümkün olduğunca güvenli dönüşüm yapmayı amaçlayan waypoint ve rota editörü.
 
-> This is a technical planning/conversion tool, not a substitute for ECDIS route checking, bridge procedures, chart review, vessel-specific manoeuvring limits, or navigational judgment. Verify every exported route and safety parameter on the target ECDIS before operational use.
+**İlk kararlı genel sürüm:** `v1.0.0`
 
-## Highlights
+> Bu araç rota planlama, veri inceleme ve format dönüşümü içindir. ECDIS rota kontrolünün, köprüüstü prosedürlerinin, güncel harita incelemesinin, gemiye özgü manevra limitlerinin veya seyir kararının yerine geçmez. Operasyonel kullanımdan önce her rota ve emniyet parametresi hedef ECDIS üzerinde ayrıca doğrulanmalıdır.
 
-- Turkish / English interface (`TR | EN`).
-- Canonical WGS 84 waypoint model with raw-input preservation and explicit validation.
-- Coordinate parser for DD, DDM and DMS, including Turkish/English hemisphere letters and decimal point/comma forms.
-- Selected coordinate display format propagates across the waypoint table, Bulk Text interpretation preview, map popup/editor and live drag readout.
-- Dynamic waypoint table: insert, delete, move up/down, bulk append, clear table, and automatic duplicate-name disambiguation.
-- OpenStreetMap map editor with draggable waypoints, live coordinate feedback while dragging, map-based waypoint insertion/deletion/editing, route-direction arrows and optional leg distance/course labels.
-- Rhumb Line and Great Circle calculations, route-level default plus per-leg override.
-- Planned speed, leg time, cumulative distance/time and ETA calculations with fixed UTC offset selection.
-- Import/export support for Sperry `.route`, CSV/TXT, GPX, KML/KMZ, GeoJSON and XLS/XLSX where the browser dependency is available.
-- Metadata-aware canonical `Waypoint + Leg` model to reduce semantic loss during cross-format conversion.
-- Qibla / Kaaba inspection view with WGS 84 great-circle bearing and WMM2025 magnetic variation; compass deviation is explicitly excluded.
+## İndir / çalıştır
 
-## Run
+### Masaüstü
 
-Download `Sperry_Route_Coordinate_Studio.html` and open it in a modern Chromium/Firefox browser.
+Tek HTML dosyasını indirin ve güncel Chrome/Edge/Firefox ile açın:
 
-The application is delivered as one HTML file, but the current build loads these runtime dependencies from public CDNs:
+- **Doğrudan HTML:** `https://raw.githubusercontent.com/bemiroglu/sperry-route-coordinate-studio/main/Sperry_Route_Coordinate_Studio.html`
+- **GitHub dosya sayfası:** `https://github.com/bemiroglu/sperry-route-coordinate-studio/blob/main/Sperry_Route_Coordinate_Studio.html`
 
-- Leaflet 1.9.4
-- SheetJS/xlsx 0.18.5
-- JSZip 3.10.1
+### Android
 
-OpenStreetMap tiles also require network access. A fully vendored/offline build is a future work item.
+Bazı Android tarayıcıları / indirme yöneticileri GitHub Raw içeriğinin MIME türünü yeniden yorumlayıp indirilen dosya adına yanlışlıkla `.xml` ekleyebilir (`.html.xml`). Bu davranış HTML uygulamasının kendisinden değil, indirme zincirindeki MIME/dosya-adı yorumundan kaynaklanabilir.
 
-## Coordinate model
+**Önerilen Android indirmesi:**
 
-The internal canonical model is WGS 84 geographic latitude/longitude. The application currently does **not** expose a fake datum selector. Other source CRS/datum families such as UTM, ED50 or TUREF/ITRF should only be added with a real, verified transformation engine.
+- `https://raw.githubusercontent.com/bemiroglu/sperry-route-coordinate-studio/main/downloads/Sperry_Route_Coordinate_Studio_v1.0.0.zip`
 
-Accepted coordinate examples include:
+ZIP'i açıp içindeki `Sperry_Route_Coordinate_Studio.html` dosyasını kullanın. Böylece dosya uzantısı korunur.
+
+Doğrudan HTML indirip dosya adı `Sperry_Route_Coordinate_Studio.html.xml` olursa, Android dosya yöneticisinde son `.xml` uzantısını kaldırıp adı tekrar `Sperry_Route_Coordinate_Studio.html` yapabilirsiniz.
+
+## Başlıca özellikler
+
+- Gerçek **TR / EN** arayüzü.
+- DD, DDM ve DMS koordinat girişi/gösterimi; Türkçe/İngilizce yarımküre harfleri ve nokta/virgül ondalık desteği.
+- Seçilen koordinat gösterim formatının WP tablosu, Toplu Metin önizlemesi, harita WP editörü ve sürükleme sırasındaki canlı koordinat etiketine uygulanması.
+- WGS 84 tabanlı kanonik waypoint modeli ve açık doğrulama.
+- WP ekleme, silme, yukarı/aşağı taşıma, araya WP ekleme, toplu ekleme ve mükerrer isimleri otomatik benzersizleştirme.
+- OpenStreetMap üzerinde WP sürükleme, sürüklerken canlı koordinat, harita üzerinde WP ekleme/silme/düzenleme.
+- Leg üzerinde yön oku ile mesafe/true course etiketi; etiketleri `tümü / akıllı / kapalı` modlarında yönetme.
+- Rhumb Line ve Great Circle; rota varsayılanı + leg bazında seçim.
+- Planlanan hız, leg süresi, kümülatif mesafe/süre ve sabit UTC offset ile ETA.
+- Sperry `.route`, CSV/TXT, GPX, KML/KMZ, GeoJSON ve tarayıcı bağımlılığı yüklüyse XLS/XLSX içe/dışa aktarma.
+- Kaynak formatların farklı leg-semantiklerini kanonik `Waypoint + Leg` modeline eşleme.
+- Bağımsız **Kıble / Kâbe** görünümü: İstanbul varsayılan başlangıç, haritadan serbest başlangıç veya mevcut rota waypointlerinden başlangıç seçimi; WGS 84 great-circle yön/mesafe ve WMM2025 manyetik varyasyon.
+
+## Koordinat modeli
+
+İç kanonik model WGS 84 coğrafi enlem/boylamdır. Uygulama şu aşamada göstermelik bir datum seçimi sunmaz. WGS 84/UTM, ED50/UTM veya TUREF/ITRF gibi başka kaynak CRS'ler ancak doğrulanmış dönüşüm motoru ile eklenmelidir.
+
+Örnek kabul edilen girişler:
 
 ```text
 41.123456
@@ -47,78 +59,93 @@ Accepted coordinate examples include:
 41°07'24,4416"N
 ```
 
-The parser rejects contradictory sign/hemisphere combinations and invalid latitude/longitude/minute/second ranges rather than silently correcting them.
+Parser; işaret/yarımküre çelişkisini, eksen uyuşmazlığını ve geçersiz derece/dakika/saniye aralıklarını sessizce düzeltmek yerine reddeder.
 
-## Waypoints and legs
-
-The application deliberately separates waypoint data from leg data:
+## Waypoint ve leg modeli
 
 ```text
 WP01  ---- LEG 01 ---->  WP02  ---- LEG 02 ---->  WP03
 ```
 
-A leg owns its geometry, distance, course, planned speed and travel time. A waypoint owns its position, name, note and arrival/cumulative values. Import/export adapters map this canonical model to each file format's own semantics.
+Waypoint; konum, ad, not ve varış/kümülatif değerleri taşır. Leg; geometri, mesafe, true course, planlanan hız ve seyir süresini taşır. Format adaptörleri kaynak/hedef dosyanın semantiğini bu modele dönüştürür.
 
-## Sperry `.route` notes
+## Sperry `.route` notları
 
-Observed VisionMaster FT `.route` files use a DataSet-style XML structure containing `Summaries`, `ControlPoints` and related fields. The application preserves/imports as much Sperry metadata as supported by the current model.
+- Doğrulanmış örneklerde `DepartingControlLineType = RhumbLine` görülmüştür.
+- VisionMaster Great Circle tokenı henüz gerçek bir `.route` örneği ile doğrulanmamıştır; uygulama bunu uydurmaz.
+- Great Circle leg içeren rota `.route` olarak dışa aktarılırken kullanıcı açıkça onay verirse aynı WP'ler korunup RhumbLine'a indirgenebilir; editördeki asıl rota değişmez.
+- Yeni rota için Sperry turn radius varsayılanı şimdilik **40 m geçici çalışma değeri**dir; gemi ve operasyona göre doğrulanmalıdır.
 
-Important current limitations:
+## Excel / CSV
 
-- Verified example files use `RhumbLine` for `DepartingControlLineType`.
-- A real VisionMaster Great Circle token has not yet been verified. The application therefore does not invent one.
-- If a route contains Great Circle legs, Sperry export requires explicit downgrade confirmation to Rhumb Line; the editor's original route remains unchanged.
-- New-route Sperry turn radius currently defaults to **40 m as a provisional user-selected working value**. It must be verified for the vessel and operation.
+XLS/XLSX çalışma kitabında Planned Speed hücreleri değiştirildiğinde leg time, cumulative time ve ETA formüllerinin yeniden hesaplanması amaçlanır. Geometriye göre leg distance/course HTML tarafında hesaplanır; Excel'de yalnız `Geometry` metnini değiştirmek jeodeziyi yeniden hesaplamaz.
 
-## File conversion
+CSV/list ayıracı varsayılan olarak Türkçe Excel kullanımına uygun `;` değeridir ve kullanıcı tarafından değiştirilebilir.
 
-The intended pipeline is:
+## Kıble / Kâbe görünümü
 
-```text
-Source file / manual input
-        ↓
-Parse + validate
-        ↓
-Canonical WGS 84 Waypoint + Leg model
-        ↓
-User review/edit
-        ↓
-Target-format adapter
-```
+Başlangıç noktası:
 
-No target format can represent every property of every source format. Future releases should expose a formal `preserved / transformed / lost` conversion report before export.
+- varsayılan İstanbul,
+- haritada tıklanan/sürüklenen herhangi bir konum,
+- veya mevcut rota WP listesinden seçilen bir waypoint
 
-## Excel output
+olabilir. Kâbe'ye Great Circle ilk azimutu ve mesafesi hesaplanır. Magnetic değer WMM2025 declination kullanılarak `True − declination` şeklinde verilir. Gemi/pusulaya özgü **deviation dahil değildir**.
 
-XLS/XLSX output includes route data and summary information. Planned-speed cells are intended to remain editable, with spreadsheet formulas updating leg time, cumulative time and ETA. Route geometry determines the leg distance/course written by the HTML geodesy engine; changing only the text in an Excel `Geometry` cell does not currently recompute geodesy in Excel.
+## Çalışma zamanı bağımlılıkları
 
-The default CSV/list separator is `;`, suitable for common Turkish Excel workflows, and can be changed by the user.
+Tek dosyalı uygulama şu bağımlılıkları CDN'den yükler:
 
-## Qibla / Kaaba view
+- Leaflet 1.9.4
+- SheetJS/xlsx 0.18.5
+- JSZip 3.10.1
 
-The independent Qibla view:
+OpenStreetMap karoları da internet gerektirir. Tam offline/vendored sürüm roadmap'tedir.
 
-- starts from Istanbul,
-- allows arbitrary start-point selection or dragging,
-- draws a great-circle line to the Kaaba,
-- reports true initial bearing and distance,
-- computes magnetic variation using WMM2025,
-- reports magnetic bearing as `True − declination`.
+## Test ve kalite
 
-Compass deviation is vessel/compass-specific and is **not** included.
+İlk sürüm regresyon notları `docs/QA_v1.0.0.md` içindedir. Sentetik örnekler `examples/` dizinindedir. Gerçek operasyonel rota dosyaları veya Sperry üretici dokümanları kamuya açık depoya eklenmemiştir.
 
-## Examples
+## Gelecek geliştirmeler
 
-The `examples/` directory contains synthetic, non-operational files for parser/conversion testing. They are not navigational recommendations.
+`ROADMAP.md` içinde saklanır. Özellikle ileride değerlendirilecek yan işlevlerden biri; kullanıcı tarafından başlangıç noktası, leg uzunluğu, dönüş yönü ve diğer parametreleri verilen **SAR arama patternlerinden rota üretip `.route`/diğer rota formatlarına aktarma** modülüdür.
 
-## QA
+## Üçüncü taraf atıfları
 
-See `docs/QA_v0.9.0.md` for the focused release checks and the remaining browser-smoke-test caveat.
+Bkz. `NOTICE.md`. WMM2025 manyetik varyasyon hesaplaması Darren Yeates'in MIT lisanslı `magvar` çalışmasından uyarlanmıştır. Leaflet, SheetJS ve JSZip kendi lisanslarına tabidir.
 
-## Third-party attribution
+## Proje lisansı
 
-See `NOTICE.md`. The WMM2025 magnetic-variation implementation includes/adapts MIT-licensed work by Darren Yeates. Leaflet, SheetJS and JSZip are runtime dependencies loaded from their public CDNs and remain subject to their respective licenses.
+Bu ilk sürümde proje-geneli bir `LICENSE` dosyası tanımlanmamıştır. Repository sahibi ayrıca bir lisans ilan edene kadar proje kodunda normal telif hakları geçerlidir; üçüncü taraf bileşenlerin kendi lisansları saklıdır.
 
-## Project license
+---
 
-No project-wide `LICENSE` file is included in this initial public baseline. Unless a license is added by the repository owner, normal copyright restrictions apply to the project code. Third-party components remain under their own licenses.
+<a id="english"></a>
+
+# English
+
+Browser-based waypoint and route editor/converter focused on Sperry Marine VisionMaster FT `.route` workflows while supporting common GPX, KML/KMZ, CSV, XLS/XLSX and GeoJSON interchange where practical.
+
+**First stable public release:** `v1.0.0`
+
+> This is a planning, inspection and conversion tool. It does not replace ECDIS route checking, bridge procedures, chart review, vessel-specific manoeuvring limits or navigational judgment. Verify every exported route and safety parameter on the target ECDIS before operational use.
+
+## Download / run
+
+- **Direct HTML:** `https://raw.githubusercontent.com/bemiroglu/sperry-route-coordinate-studio/main/Sperry_Route_Coordinate_Studio.html`
+- **Android-safe ZIP:** `https://raw.githubusercontent.com/bemiroglu/sperry-route-coordinate-studio/main/downloads/Sperry_Route_Coordinate_Studio_v1.0.0.zip`
+
+If an Android download manager renames the direct HTML to `.html.xml`, either use the ZIP above or rename the downloaded file so that its final extension is `.html`.
+
+## Highlights
+
+- Full Turkish / English interface.
+- DD / DDM / DMS parsing and display across the table, Bulk Text preview, map editor and live drag readout.
+- Canonical WGS 84 `Waypoint + Leg` model.
+- Waypoint insert/delete/reorder, map editing and live coordinate feedback while dragging.
+- Rhumb Line and Great Circle calculations with per-leg control.
+- Planned speed, leg/cumulative time and ETA with fixed UTC-offset handling.
+- Import/export adapters for Sperry `.route`, CSV/TXT, GPX, KML/KMZ, GeoJSON and XLS/XLSX when the browser dependency is available.
+- Qibla / Kaaba inspection view with Istanbul default, arbitrary map selection or current-route waypoint selection; WMM2025 variation is reported with compass deviation explicitly excluded.
+
+For detailed limitations, Sperry notes, Excel behavior, testing and future work, see the Turkish section above and `ROADMAP.md` / `docs/QA_v1.0.0.md`.

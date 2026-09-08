@@ -1,70 +1,102 @@
 # Sperry Route & Coordinate Studio v1.0.0 — Release QA
 
-Date: 2026-09-08
+Date: 2026-09-09
 
-## Release-blocking regression fixed
+## Release-blocking corrections included in v1.0.0
 
-Observed failure: after importing a Sperry `.route`, changing coordinate display from DDM to DMS could make `HARİTADA GÖSTER / SHOW ON MAP` unusable and changing the display format back did not necessarily recover the rows.
+### 1. DDM / DMS display-switch regression
 
-Root cause: DDM/DMS formatting used floating-point rounding without explicit carry handling. Coordinates close enough to a minute/degree boundary could render as `60.00″` or `60.00000′`. The parser correctly rejects values >= 60, so the formatted display text could become an invalid new input value.
+Observed failure during real use: after importing a Sperry `.route`, switching coordinate display from DDM to DMS could make **SHOW ON MAP / HARİTADA GÖSTER** unusable. Switching back did not necessarily recover the route.
 
-Fix: DDM and DMS are now formed from integer-scaled minute/second units; rounding is completed first and any carry is propagated into minute/degree fields before text is produced.
+Root cause: coordinate display formatting could round a value near a minute/degree boundary to `60.00″` or `60.00000′`. The coordinate parser correctly rejects minute/second values >= 60; therefore a valid coordinate could become invalid only because its display format was changed.
 
-## Automated browser regression
+Correction: DDM/DMS formatting now performs explicit carry propagation at 60 seconds / 60 minutes. Display-format conversion is required to remain parseable.
 
-Chromium engine was exercised through Playwright using the full application DOM and a deterministic Leaflet API stub (network navigation is administratively blocked in this execution environment).
+### 2. Release-version consistency
 
-Tested with the real previously supplied `AHP-5_Nene-Hatun_B-C-G-H.route` sample:
+A previous publication step left visible `v0.9.0` text in the workspace header even though the JavaScript version constant had already been changed to `v1.0.0`. GPX creator metadata also retained the old release-candidate version.
 
-- `.route` import: **PASS**, 5 active WPs.
-- Initial map eligibility after import: **PASS**.
-- DDM → DMS switch: **PASS**, 0 invalid rows, map button remains enabled.
-- DMS map opening: **PASS**.
-- Repeated `DD → DDM → DMS → DDM → DMS`: **PASS**, no invalid rows and map remains available.
-- Empty waypoint table → map view: **PASS**.
-- Qibla start selector contains Istanbul + current route WPs: **PASS**.
-- Selecting a route WP as Qibla start: **PASS**.
-- Turkish/English Qibla selector label regeneration: **PASS**.
-- Page runtime errors during this regression sequence: **0**.
+Correction:
 
-## Coordinate parser / formatter tests
+- HTML title: `v1.0.0`
+- visible workspace kicker: `v1.0.0`
+- JavaScript `APP_VERSION`: `v1.0.0`
+- release build normalizes remaining release-candidate markers to `v1.0.0`
+- release consistency check fails if `v0.9.0` occurs anywhere in the final v1.0.0 HTML.
 
-- Existing parser self-test: **8/8 PASS**.
-- New DDM/DMS rounding-boundary self-test: **PASS**.
-- Coordinate-display propagation to waypoint table: **PASS**.
-- Bulk Text interpretation uses selected display format: code-path verified and covered by shared formatter.
+### 3. Canonical release filename
 
-## Cross-format round-trip regression
+The canonical public artifact is:
 
-Starting from the same Sperry route, browser-driven exports were captured and re-imported for:
+`Sperry_Route_Coordinate_Studio_v1.0.0.html`
 
-- `.route → CSV → .route`: **PASS**.
-- `.route → GPX → .route`: **PASS**.
-- `.route → KML → .route`: **PASS**.
-- `.route → GeoJSON → .route`: **PASS**.
+`Sperry_Route_Coordinate_Studio.html` is retained only as a latest-stable convenience alias. The versioned root file, latest alias and pinned download HTML must be byte-identical.
 
-Each re-import produced 5 valid WPs and kept Sperry export enabled. These checks exercise the application's own adapters; they do not claim that every third-party vendor extension can be preserved.
+## Automated parser / formatter checks
 
-## KMZ / XLS / XLSX scope
+Development-side release checks completed before publication:
 
-KMZ and spreadsheet code paths remain dependent on runtime JSZip / SheetJS libraries loaded from CDN. Previous development QA covered the application's mapping logic and representative KMZ structures, but this execution environment does not permit a live CDN browser navigation test. Third-party KMZ files can still contain vendor-specific structures or NetworkLinks requiring future adapter work.
+- JavaScript syntax: **PASS**
+- Coordinate round-trip regression: **34/34 PASS**
+- DDM/DMS boundary carry handling: **PASS**
+- Static release consistency: **PASS**
+- Final release version consistency: **PASS**
+- Clear-text programmer identity absent from final source: **PASS**
 
-## Static release audit
+## Browser-path regression
 
-- JavaScript syntax (`node --check`): **PASS**.
-- HTML IDs: **93/93 unique**.
-- Static `$('<id>')` references resolve to existing IDs: **PASS**.
-- Suspect malformed custom CSS selectors after audit: **0**.
-- Source-visible programmer identity remains obfuscated: **PASS**.
-- Public repository contains no real operational AHP route samples or Sperry manual: intended policy.
+Chromium was exercised through Playwright using the full application DOM and a deterministic Leaflet API stub. This isolates application interaction logic from CDN/network availability while still exercising the browser event path.
 
-## Navigation / calculation caveats retained
+The previously supplied real development sample `AHP-5_Nene-Hatun_B-C-G-H.route` was used locally for regression. It is **not** included in the public repository.
 
-- Coordinate datum: WGS 84; current Rhumb/Great Circle distance and bearing calculations use the application's spherical Earth model, not an ellipsoidal navigation-grade geodesic solver.
-- Sperry Great Circle XML token remains unverified. The application does not invent it.
-- New-route Sperry turn radius default `40 m` remains provisional and vessel/operation dependent.
-- WMM2025 magnetic value excludes vessel/compass deviation.
+Test sequence:
+
+1. Import `.route` — **PASS**, 5 active waypoints.
+2. Confirm zero invalid non-empty waypoint rows — **PASS**.
+3. Repeated display switches `DMS → DD → DDM → DMS → DDM → DMS` — **PASS**.
+4. Open map after every display-format switch — **PASS**.
+5. Qibla start selector contains Istanbul, map-selected start and the five active route waypoints — **PASS**.
+6. Select route WP as Qibla start — **PASS**.
+7. Clear waypoint table and open an empty map — **PASS**.
+8. Browser runtime errors during this sequence — **0**.
+
+## Distribution checks
+
+### HTML
+
+The GitHub build workflow generates:
+
+- `Sperry_Route_Coordinate_Studio_v1.0.0.html` — canonical release file
+- `Sperry_Route_Coordinate_Studio.html` — latest-stable alias
+- `downloads/Sperry_Route_Coordinate_Studio_v1.0.0.html` — pinned download copy
+
+The build verifies byte equality between these files and records SHA-256 values in `SHA256SUMS.txt`.
+
+### Android ZIP
+
+`downloads/Sperry_Route_Coordinate_Studio_v1.0.0.zip` contains the versioned HTML filename:
+
+`Sperry_Route_Coordinate_Studio_v1.0.0.html`
+
+This ZIP is the recommended Android download path when a browser/download manager appends an unwanted `.xml` extension to raw HTML downloads.
+
+## Import/export scope retained from the development line
+
+The canonical route model remains `Waypoint + outbound Leg`. Current adapters cover Sperry `.route`, CSV/TXT, GPX, KML/KMZ, GeoJSON and XLS/XLSX where runtime dependencies are available.
+
+Earlier development regression covered representative `.route → CSV/GPX/KML/GeoJSON → .route` round trips. No intentional adapter-semantic change was introduced by the final version-label/documentation correction pass.
+
+KMZ and XLS/XLSX still depend on JSZip / SheetJS loaded at runtime. Third-party KMZ files can contain vendor-specific structures, multiple KML documents or NetworkLinks that are not guaranteed to map losslessly.
+
+## Navigation / calculation caveats
+
+- Coordinate reference: WGS 84 geographic latitude/longitude.
+- Current Rhumb/Great Circle distance/bearing calculations use a spherical Earth model (`R = 6,371,008.8 m`), not an ellipsoidal navigation-grade geodesic solver.
+- Sperry Great Circle `.route` token remains unverified from a real VisionMaster Great Circle route file; the application does not invent it.
+- New-route turn-radius default `40 m` remains provisional and vessel/operation dependent.
+- WMM2025 magnetic values exclude vessel/compass deviation.
+- Operational route checking on the target ECDIS remains mandatory.
 
 ## Release decision
 
-`v1.0.0` is suitable as the first public baseline provided the above limitations are stated in README/NOTICE and operational routes are independently verified on the target ECDIS.
+`v1.0.0` is accepted as the first stable public baseline with the limitations above stated openly in README/NOTICE. Future development is tracked separately in `ROADMAP.md` so that the v1.0.0 baseline can remain reproducible and reviewable.

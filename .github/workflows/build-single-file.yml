@@ -5,6 +5,7 @@ on:
     paths:
       - 'src/**'
       - 'tools/build_single_file.py'
+      - 'tools/release_v1.py'
       - '.github/workflows/build-single-file.yml'
   workflow_dispatch:
 
@@ -16,16 +17,51 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Apply v1.0 source migration
+        run: python tools/release_v1.py
+
       - name: Build single-file HTML
         run: python tools/build_single_file.py
-      - name: Commit generated standalone if changed
+
+      - name: Build deterministic Android-safe ZIP and checksums
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile, ZipInfo, ZIP_DEFLATED
+          import hashlib
+
+          root = Path('.')
+          app = root / 'Sperry_Route_Coordinate_Studio.html'
+          outdir = root / 'downloads'
+          outdir.mkdir(exist_ok=True)
+          zpath = outdir / 'Sperry_Route_Coordinate_Studio_v1.0.0.zip'
+
+          data = app.read_bytes()
+          zi = ZipInfo('Sperry_Route_Coordinate_Studio.html', (2026, 9, 8, 0, 0, 0))
+          zi.compress_type = ZIP_DEFLATED
+          zi.external_attr = 0o644 << 16
+          with ZipFile(zpath, 'w') as zf:
+              zf.writestr(zi, data)
+
+          def sha256(path):
+              return hashlib.sha256(path.read_bytes()).hexdigest()
+
+          (root / 'SHA256SUMS.txt').write_text(
+              f"{sha256(app)}  {app.name}\n"
+              f"{sha256(zpath)}  downloads/{zpath.name}\n",
+              encoding='utf-8'
+          )
+          PY
+
+      - name: Commit generated release files if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add Sperry_Route_Coordinate_Studio.html
+          git add src Sperry_Route_Coordinate_Studio.html downloads SHA256SUMS.txt
           if git diff --cached --quiet; then
             echo "No generated changes."
             exit 0
           fi
-          git commit -m "Build standalone HTML [skip ci]"
+          git commit -m "Build v1.0.0 stable standalone [skip ci]"
           git push

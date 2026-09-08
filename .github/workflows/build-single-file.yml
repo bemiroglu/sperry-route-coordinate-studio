@@ -1,11 +1,12 @@
-name: Build standalone HTML
+name: Build and verify v1.0.0 single-file HTML
 
 on:
   push:
+    branches: [main]
     paths:
       - 'src/**'
       - 'tools/build_single_file.py'
-      - 'tools/release_v1.py'
+      - 'tests/**'
       - '.github/workflows/build-single-file.yml'
   workflow_dispatch:
 
@@ -13,16 +14,55 @@ permissions:
   contents: write
 
 jobs:
-  build:
+  build-verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
 
-      - name: Apply v1.0 source migration
-        run: python tools/release_v1.py
-
-      - name: Build single-file HTML
+      - name: Build canonical and pinned HTML
         run: python tools/build_single_file.py
+
+      - name: Release consistency checks
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from html.parser import HTMLParser
+          root=Path('.')
+          ver='v1.0.0'
+          canonical=root/f'Sperry_Route_Coordinate_Studio_{ver}.html'
+          latest=root/'Sperry_Route_Coordinate_Studio.html'
+          pinned=root/'downloads'/canonical.name
+          for p in (canonical,latest,pinned): assert p.exists(), p
+          s=canonical.read_text(encoding='utf-8')
+          assert '<title>Sperry Route & Coordinate Studio v1.0.0</title>' in s
+          assert 'WGS 84 · ROUTE / COORDINATE WORKSPACE · v1.0.0' in s
+          assert "const APP_VERSION='v1.0.0'" in s
+          assert 'v0.9.0' not in s
+          assert canonical.read_bytes()==latest.read_bytes()==pinned.read_bytes()
+          class P(HTMLParser):
+              def __init__(self): super().__init__(); self.ids=[]
+              def handle_starttag(self,tag,attrs): self.ids += [v for k,v in attrs if k=='id']
+          p=P(); p.feed(s)
+          assert len(p.ids)==len(set(p.ids)), 'duplicate HTML id'
+          print(f'v1.0.0 release consistency PASS ({len(p.ids)} unique ids)')
+          PY
+
+      - name: JavaScript syntax from final HTML
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          s=Path('Sperry_Route_Coordinate_Studio_v1.0.0.html').read_text(encoding='utf-8')
+          blocks=re.findall(r'<script(?:\s[^>]*)?>(.*?)</script>',s,flags=re.S)
+          Path('/tmp/rcs-inline.js').write_text('\n'.join(blocks),encoding='utf-8')
+          PY
+          node --check /tmp/rcs-inline.js
 
       - name: Build deterministic Android-safe ZIP and checksums
         run: |
@@ -30,38 +70,30 @@ jobs:
           from pathlib import Path
           from zipfile import ZipFile, ZipInfo, ZIP_DEFLATED
           import hashlib
-
-          root = Path('.')
-          app = root / 'Sperry_Route_Coordinate_Studio.html'
-          outdir = root / 'downloads'
-          outdir.mkdir(exist_ok=True)
-          zpath = outdir / 'Sperry_Route_Coordinate_Studio_v1.0.0.zip'
-
-          data = app.read_bytes()
-          zi = ZipInfo('Sperry_Route_Coordinate_Studio.html', (2026, 9, 8, 0, 0, 0))
-          zi.compress_type = ZIP_DEFLATED
-          zi.external_attr = 0o644 << 16
-          with ZipFile(zpath, 'w') as zf:
-              zf.writestr(zi, data)
-
-          def sha256(path):
-              return hashlib.sha256(path.read_bytes()).hexdigest()
-
-          (root / 'SHA256SUMS.txt').write_text(
-              f"{sha256(app)}  {app.name}\n"
-              f"{sha256(zpath)}  downloads/{zpath.name}\n",
-              encoding='utf-8'
-          )
+          root=Path('.')
+          ver='v1.0.0'
+          canonical=root/f'Sperry_Route_Coordinate_Studio_{ver}.html'
+          latest=root/'Sperry_Route_Coordinate_Studio.html'
+          pinned=root/'downloads'/canonical.name
+          zpath=root/'downloads'/f'Sperry_Route_Coordinate_Studio_{ver}.zip'
+          zi=ZipInfo(canonical.name,(2026,9,9,0,0,0))
+          zi.compress_type=ZIP_DEFLATED
+          zi.external_attr=0o644 << 16
+          with ZipFile(zpath,'w',compression=ZIP_DEFLATED,compresslevel=9) as zf:
+              zf.writestr(zi,canonical.read_bytes())
+          def sha(p): return hashlib.sha256(p.read_bytes()).hexdigest()
+          files=(canonical,latest,pinned,zpath)
+          (root/'SHA256SUMS.txt').write_text(''.join(f'{sha(p)}  {p.as_posix()}\n' for p in files),encoding='utf-8')
           PY
 
       - name: Commit generated release files if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src Sperry_Route_Coordinate_Studio.html downloads SHA256SUMS.txt
+          git add Sperry_Route_Coordinate_Studio_v1.0.0.html Sperry_Route_Coordinate_Studio.html downloads SHA256SUMS.txt
           if git diff --cached --quiet; then
             echo "No generated changes."
             exit 0
           fi
-          git commit -m "Build v1.0.0 stable standalone [skip ci]"
+          git commit -m "Build verified v1.0.0 release artifacts [skip ci]"
           git push

@@ -30,28 +30,3 @@
     <div class="row-actions">
       <span class="pill"><span data-tr="Başlangıç satırı" data-en="Initial rows"></span>: <b>50</b></span>
       <span class="pill"><span data-tr="Aktif WP" data-en="Active WP"></span>: <b id="activeWpCount">0</b></span>
-      <span class="pill"><span data-tr="Toplam" data-en="Total"></span>: <b id="totalNmTop">0.00 NM</b></span>
-      <button id="helpBtn" class="ghost" type="button" data-tr="KOORDİNAT GİRİŞ YARDIMI" data-en="COORDINATE INPUT HELP"></button>
-      <button id="crsHelpBtn" class="ghost" type="button" data-tr="CRS / DATUM BİLGİSİ" data-en="CRS / DATUM INFO"></button>
-      <button id="qiblaBtn" class="ghost qibla-btn" type="button" data-tr="KIBLE / KÂBE" data-en="QIBLA / KAABA"></button>
-      <button id="resetAllBtn" class="ghost" type="button" data-tr="TÜMÜNÜ TEMİZLE" data-en="RESET ALL"></button>
-      <span id="authorEntry" class="fineprint author-sigil"></span>
-    </div>
-  </section>
-
-  <div class="io-grid">
-    <section class="card io">
-      <h2 class="section-title" data-tr="DOSYA AÇ" data-en="OPEN COORDINATE FILE"></h2>
-      <div class="dropzone"><div class="io-actions"><button id="openFileBtn" class="secondary" type="button" data-tr="DOSYA SEÇ" data-en="CHOOSE FILE"></button><input id="fileInput" type="file" accept=".route,.gpx,.kml,.kmz,.csv,.txt,.xls,.xlsx,.geojson,.json"></div><div class="help-note" data-tr=".route, GPX, KML/KMZ, CSV/TXT, XLS/XLSX ve GeoJSON desteklenir. İçe aktarılan veriler aynı WP tablosuna getirilir." data-en="Supports .route, GPX, KML/KMZ, CSV/TXT, XLS/XLSX and GeoJSON. Imported data is normalized into the same waypoint table."></div></div>
-      <div id="fileStatus" class="statusbar" data-tr="Henüz dosya seçilmedi." data-en="No file selected yet."></div>
-    </section>
-    <section class="card io">
-      <h2 class="section-title" data-tr="TOPLU METİN" data-en="BULK PASTE"></h2>
-      <div class="field"><textarea id="bulkText" rows="4" placeholder="A; 41 02.450 N; 029 04.230 E&#10;B; 41,12545; 29,18552"></textarea></div>
-      <div class="io-actions"><button id="previewBulkBtn" class="secondary" type="button" data-tr="YORUMLA / ÖNİZLE" data-en="PARSE / PREVIEW"></button><button id="acceptBulkBtn" class="primary" type="button" disabled data-tr="TABLOYA AKTAR" data-en="ACCEPT INTO TABLE"></button><button id="clearBulkBtn" class="ghost" type="button" data-tr="TEMİZLE" data-en="CLEAR"></button></div>
-      <div id="bulkPreview" class="bulk-preview hidden"></div>
-    </section>
-  </div>
-
-  <section class="card editor-card">
-    <div class="editor-head"><h2 class="section-title" style="margin:0" data-tr="WAYPOINT / LEG TABLOSU" data-en="WAYPOINT / LEG EDITOR"></h2><div class="spacer"></div><button id="clearWpTableBtn" class="danger" type="button" data-tr="WP TABLOSUNU TEMİZLE" data-en="CLEAR WP TABLE"></button><button id="add1" class="ghost" type="button">+1</button><button id="add10" class="ghost" type="button">+10</button><button id="add50" class="ghost" type="button">+50</button><button id="mapBtn" class="primary" type="button" disabled data-tr="HARİTADA GÖSTER" data-en="SHOW MAP"></button></div>

@@ -1,33 +1,31 @@
 # Changelog
 
-## v1.0.0 — Initial stable public release
+## v1.0.0 — 2026-09-09
 
-- Fixed a coordinate-display regression where switching an imported route to DMS could produce rounded `60.00″`/`60.00000′` values, leave rows invalid and disable map display. DDM/DMS formatters now carry rounding into the next minute/degree safely.
-- Added regression coverage for repeated DD ↔ DDM ↔ DMS switching after real Sperry `.route` import.
-- Added Qibla / Kaaba start-point selector populated from the current waypoint list while keeping Istanbul as the default and retaining arbitrary map/drag selection.
-- Qibla coordinate readout now follows the application's selected DD/DDM/DMS display format.
-- Corrected several malformed CSS selectors discovered during release audit (`.wptable`, `.state`, `.mini-btn`, `.brand`).
-- Retained live coordinate feedback while dragging waypoints and leg direction arrows / distance-course labels.
-- Retained canonical outbound-leg semantics introduced before release.
-- Added bilingual Turkish-first README, explicit Android download guidance and ZIP distribution path.
-- Added SAR search-pattern route generation to the deferred roadmap.
-- Promoted application version to `v1.0.0`.
+First stable public release.
 
-## v0.9.0 — Release candidate baseline
+### Release-blocking fixes
 
-- Propagated selected DD/DDM/DMS formatting to waypoint table, Bulk Text interpretation, map editor and live drag feedback.
-- Added small leg direction arrows.
-- Removed informal “bonus” wording from the Qibla / Kaaba view.
-- Added public repository source/build structure.
+- Fixed DDM/DMS rounding carry so switching coordinate display after `.route` import cannot create invalid `60.00″` / `60.00000′` display values and disable map opening.
+- Removed stale visible `v0.9.0` release-candidate text from the HTML title/workspace header.
+- GPX creator metadata is normalized to the v1.0.0 application version in the release build.
+- Added a release consistency check that rejects stale `v0.9.0` text in the final v1.0.0 HTML.
 
-## Earlier development history
+### Distribution / documentation
 
-The pre-1.0 iterations established:
+- Canonical release filename is now `Sperry_Route_Coordinate_Studio_v1.0.0.html`.
+- Unversioned `Sperry_Route_Coordinate_Studio.html` is retained only as a latest-stable alias.
+- Android-safe ZIP now contains the versioned HTML filename.
+- Reworked README to follow the established ECDIS project publication style: full English section followed by a full Turkish section, detailed operation/limitations, and references.
+- Expanded `docs/QA_v1.0.0.md` with browser regression and version-consistency checks.
 
-- Sperry `.route` parsing/export based on verified sample structure.
-- Multi-format GPX/KML/KMZ/CSV/GeoJSON/XLS/XLSX adapters.
-- Canonical `Waypoint + Leg` model.
-- Rhumb / Great Circle calculations.
-- Planned-speed, time-zone and ETA model.
-- Map editing, waypoint insertion/reordering, duplicate-name handling and route labels.
-- WMM2025-backed Qibla / Kaaba inspection view.
+### Functional baseline retained
+
+- Sperry `.route` plus GPX, KML/KMZ, CSV/TXT, GeoJSON and spreadsheet workflows.
+- Canonical `Waypoint + outbound Leg` model.
+- DD/DDM/DMS display propagation, map editing, leg direction arrows/labels, Rhumb/Great Circle handling, planned speed/time/ETA.
+- Qibla/Kaaba view with Istanbul, arbitrary map start, or active-route WP start; WMM2025 variation with compass deviation excluded.
+
+## v0.9.0 — 2026-09-07
+
+Release-candidate baseline before the v1.0.0 regression correction and documentation pass.
